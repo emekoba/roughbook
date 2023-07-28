@@ -17,7 +17,7 @@ void start() async {
   String tokenTest = "1689241267162x903812884532513300";
   String tokenLive = "1687976863621x348621495749399600";
 
-  String pIdTest = "1689230610288x956883674174062600";
+  String pIdTest = "1689859976791x114655392812236800";
   String pIdLive = "1685771716678x265965453065584640";
 
   bool useLive = false;
@@ -48,15 +48,18 @@ void start() async {
   var dayDate = responseJson['response']["day_date"];
   var sessionId = responseJson['response']["session_id"];
   var routinesAll = responseJson['response']["routines_all"];
-  int minLength =
-      min(dayDate.length, min(sessionId.length, routinesAll.length));
+  var workoutNamesAll = responseJson['response']["workout_names"];
+
+  int br = min(sessionId.length, routinesAll.length);
+  int minLength = min(dayDate.length, br);
 
   print([
     "5",
     "dayDate length ${dayDate.length}",
     "sessionId length - ${sessionId.length}",
     "routinesAll length - ${routinesAll.length}",
-    "routinesAll length - ${routinesAll.length}"
+    "routinesAll length - ${routinesAll.length}",
+    "workouts length - ${workoutNamesAll.length}"
   ]);
 
   List<MyTuple3> zipped = List.generate(
@@ -138,5 +141,9 @@ void start() async {
   }
 
   // print(russ);
-  print(result["response"].keys);
+  print([
+    result["response"]["weeks"].map((e) => e.keys).toList(),
+    // jsonDecode(result["response"])
+    // ["routines_all"]
+  ]);
 }
