@@ -10,8 +10,7 @@ void start() async {
 
   final response = await post(
     Uri.parse(
-      "https://sidyum1.bubbleapps.io/version-test/api/1.1/wf/test_russell_copy"
-      '?purchased_program_id=1689706339075x560658870402547700&api_token=$token',
+      "https://sidyum1.bubbleapps.io/version-test/api/1.1/wf/test_russell_copy_new?purchased_program_id=1689706339075x560658870402547700&api_token=$token",
     ),
     headers: {
       'Authorization': 'Bearer $token',
