@@ -50,8 +50,8 @@ void start() async {
   var routinesAll = responseJson['response']["routines_all"];
   var workoutNamesAll = responseJson['response']["workout_names"];
 
-  int minLength =
-      min(dayDate.length, min(sessionId.length, routinesAll.length));
+  int br = min(sessionId.length, routinesAll.length);
+  int minLength = min(dayDate.length, br);
 
   print([
     "5",
