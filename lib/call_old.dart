@@ -4,11 +4,17 @@ import 'dart:math';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
 
-class MyTuple3 {
+class MyTuple4 {
   final dynamic item1;
   final dynamic item2;
   final dynamic item3;
-  MyTuple3(this.item1, this.item2, this.item3);
+  final dynamic item4;
+  MyTuple4(
+    this.item1,
+    this.item2,
+    this.item3,
+    this.item4,
+  );
 }
 
 void start() async {
@@ -50,8 +56,9 @@ void start() async {
   var routinesAll = responseJson['response']["routines_all"];
   var workoutNamesAll = responseJson['response']["workout_names"];
 
-  int br = min(sessionId.length, routinesAll.length);
-  int minLength = min(dayDate.length, br);
+  int min1 = min(sessionId.length, routinesAll.length);
+  int min2 = min(workoutNamesAll.length, min1);
+  int minLength = min(dayDate.length, min2);
 
   print([
     "5",
@@ -62,23 +69,29 @@ void start() async {
     "workouts length - ${workoutNamesAll.length}"
   ]);
 
-  List<MyTuple3> zipped = List.generate(
-      minLength, (i) => MyTuple3(dayDate[i], sessionId[i], routinesAll[i]));
+  List<MyTuple4> zipped = List.generate(
+    minLength,
+    (i) => MyTuple4(
+      dayDate[i],
+      sessionId[i],
+      routinesAll[i],
+      workoutNamesAll[i],
+    ),
+  );
 
   print("6");
 
-  print("7");
-
   var groups = groupBy(zipped, (e) => e.item1);
+
   var startDate = DateFormat('EEEE, MMMM dd, yyyy')
       .parse(responseJson['response']['day_date'][0]);
   var previousDate = startDate;
-  var previousWeekNumber = 0;
-  var week = 1;
-  var day = 1;
+  int previousWeekNumber = 0;
+  int week = 1;
+  int day = 1;
   var routine = 1;
 
-  print("8");
+  print("7");
 
   var result = {
     "status": responseJson['status'],
@@ -93,46 +106,50 @@ void start() async {
 
   result['response']['weeks'] = [];
 
-  var russ = 0;
-
   for (var group in groups.entries) {
-    var bb3 = group.key.toString();
+    var dateRaw = group.key.toString();
 
-    var dateParsed = DateFormat('EEEE, MMMM d, yyyy').parse(bb3);
+    var dateParsed = DateFormat('EEEE, MMMM d, yyyy').parse(dateRaw);
 
     if (dateParsed.day != previousDate.day) {
       day += 1;
     }
+
     if (dateParsed.weekday == startDate.weekday &&
         dateParsed.day != startDate.day) {
       week += 1;
       day = 1;
     }
+
     if (dateParsed.weekday == startDate.weekday && day != 1) {
       week += 1;
     }
+
     if (dateParsed.weekday == startDate.weekday) {
       day = 1;
     }
+
     if (week != previousWeekNumber) {
       result['response']['weeks'].add({
         "name": 'week $week',
         "current_week": dateParsed.add(Duration(days: 6)).isAfter(today) &&
             dateParsed.isBefore(today),
-        "start_time": bb3,
+        "start_time": dateRaw,
         "week_routines": []
       });
     }
 
     result['response']['weeks'][week - 1]['week_routines']
-        .add({"name": bb3, "day_routines": []});
-
-    russ += group.value.length;
+        .add({"name": dateRaw, "day_routines": []});
 
     for (var item in group.value) {
       result['response']['weeks'][week - 1]['week_routines'][day - 1]
               ['day_routines']
-          .add({"session_id": item.item2, "routine": item.item3});
+          .add({
+        "session_id": item.item2,
+        "routine": item.item3,
+        "workout_name": item.item4
+      });
     }
 
     routine += 1;
@@ -140,10 +157,5 @@ void start() async {
     routine = 1;
   }
 
-  // print(russ);
-  print([
-    result["response"]["weeks"].map((e) => e.keys).toList(),
-    // jsonDecode(result["response"])
-    // ["routines_all"]
-  ]);
+  print(result["response"]);
 }
